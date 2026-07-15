@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Camino</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.webmanifest" />
+<meta name="theme-color" content="#F2EFE4" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Camino" />
+<link rel="apple-touch-icon" href="icon-180.png" />
+<link rel="icon" type="image/png" href="icon-192.png" />
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Space+Grotesk:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap');
+
+:root{
+  --paper:#F2EFE4; --contour:#DDD6BE; --ink:#28372E; --ink-soft:#5C6B5F;
+  --trail:#BF3B2B; --done:#2F6B4A; --gold:#C9992E; --white:#fff;
+}
+*{ box-sizing:border-box; }
+html,body{ margin:0; padding:0; }
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:'Space Grotesk',system-ui,sans-serif;
+  min-height:100vh;
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:env(safe-area-inset-bottom);
+  -webkit-tap-highlight-color:transparent;
+}
+.wrap{ max-width:560px; margin:0 auto; padding:28px 20px 60px; }
+.eyebrow{ font-family:'Space Mono',monospace; font-size:11.5px; letter-spacing:.14em; color:var(--ink-soft); margin:0; }
+h1{ font-family:'Fraunces',serif; font-size:36px; line-height:1.12; margin:8px 0 10px; font-weight:600; }
+h1.small{ font-size:28px; margin:4px 0 0; }
+.muted{ color:var(--ink-soft); font-size:15px; line-height:1.5; }
+
+.banner{ margin-top:12px; background:#F7E8E3; border:1.5px solid var(--trail); color:#7A2418;
+  border-radius:10px; padding:10px 14px; font-size:14px; line-height:1.4; }
+
+.card{ background:var(--white); border:1.5px solid var(--ink); border-radius:14px; padding:16px 18px; margin:14px 0; }
+.card h2{ font-family:'Fraunces',serif; font-size:21px; margin:0; font-weight:600; }
+.card .meta{ font-family:'Space Mono',monospace; font-size:12.5px; color:var(--ink-soft); }
+.bar{ height:6px; background:#EDEAE0; border-radius:3px; margin:12px 0 4px; overflow:hidden; }
+.bar > div{ height:100%; background:var(--done); border-radius:3px; transition:width .6s ease; }
+.bar > div.full{ background:var(--gold); }
+
+button{ font-family:inherit; cursor:pointer; }
+.btn{ background:var(--trail); color:#fff; border:none; border-radius:12px;
+  padding:14px 20px; font-size:16px; font-weight:600; letter-spacing:.01em; width:100%; }
+.btn.small{ padding:11px 16px; font-size:15px; margin-top:10px; }
+.btn.done{ background:var(--done); cursor:default; }
+.btn.ink{ background:var(--ink); }
+.btn:disabled{ cursor:default; }
+.btn-ghost{ background:none; border:1.5px solid var(--ink); color:var(--ink);
+  border-radius:10px; padding:10px 16px; font-size:14px; }
+.btn-ghost.danger{ color:#9C2B1D; border-color:#9C2B1D; }
+.back{ background:none; border:none; padding:0; margin-bottom:14px;
+  font-family:'Space Mono',monospace; font-size:13px; color:var(--ink-soft); }
+
+label{ display:block; font-family:'Space Mono',monospace; font-size:12px;
+  letter-spacing:.08em; color:var(--ink-soft); margin-bottom:6px; }
+input{ width:100%; padding:12px 14px; font-size:16px; font-family:inherit;
+  border:1.5px solid var(--ink); border-radius:10px; background:#fff; color:var(--ink); }
+input:focus, button:focus-visible{ outline:2px solid var(--trail); outline-offset:2px; }
+
+.scroller{ overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; margin-top:10px; }
+.hint{ text-align:center; font-family:'Space Mono',monospace; font-size:11px;
+  color:var(--ink-soft); margin:6px 0 18px; }
+.opts{ max-width:640px; margin:0 auto; padding:0 20px 60px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.gold-box{ margin-top:14px; background:#F3EAD2; border:1.5px solid var(--gold); border-radius:12px; padding:14px 16px; }
+.gold-box p{ margin:0; }
+.gold-box .title{ font-family:'Fraunces',serif; font-size:20px; font-weight:600; }
+.confirm{ display:flex; align-items:center; gap:10px; width:100%; font-size:14px; }
+.confirm .yes{ background:#9C2B1D; color:#fff; border:none; border-radius:8px; padding:8px 16px; font-weight:600; }
+.confirm .no{ background:#EDEAE0; border:none; border-radius:8px; padding:8px 16px; }
+.center{ min-height:85vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+.center > div{ max-width:440px; width:100%; }
+#avatar{ transition:transform .8s cubic-bezier(.4,0,.2,1); }
+@media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+"use strict";
+// ============ Constantes ============
+const KEY = "camino-habitos-v2";
+const SPACING = 64, PAD = 90, LINE_Y = 170, SVG_H = 240;
+const COL = { paper:"#F2EFE4", contour:"#DDD6BE", ink:"#28372E", inkSoft:"#5C6B5F",
+              trail:"#BF3B2B", done:"#2F6B4A", gold:"#C9992E", white:"#fff" };
+
+// ============ Fechas locales ============
+function localDate(d = new Date()){
+  const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,"0"),
+        day = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+function yesterdayStr(){ const d = new Date(); d.setDate(d.getDate()-1); return localDate(d); }
+
+// ============ Estado ============
+let habits = [];
+let view = "list";           // "list" | "form" | id de hábito
+let notices = [];
+let confirming = null;       // {id, action}
+let walking = false;
+let walkTimer = null;
+let animFrom = null;         // streak previa para animar el desplazamiento
+
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw) habits = (JSON.parse(raw).habits) || [];
+  }catch(e){ habits = []; }
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify({habits})); }
+  catch(e){ console.error("No se pudo guardar", e); }
+}
+
+// Reinicio automático de días fallados
+function checkMissedDays(){
+  const today = localDate(), yest = yesterdayStr();
+  notices = [];
+  let changed = false;
+  habits = habits.map(h => {
+    if(h.streak > 0 && h.lastCheckIn !== today && h.lastCheckIn !== yest){
+      notices.push(`«${h.name}»: fallaste un día y vuelve a la salida (llevabas ${h.streak} ${h.streak===1?"día":"días"}).`);
+      changed = true;
+      return {...h, streak:0, lastCheckIn:null};
+    }
+    return h;
+  });
+  if(changed) save();
+}
+
+// ============ Acciones ============
+function addHabit(name, days){
+  const h = { id:"h"+Date.now()+Math.floor(Math.random()*1000),
+    name, days, startDate: localDate(), streak:0, lastCheckIn:null };
+  habits.push(h); save();
+  view = h.id; render();
+}
+function checkIn(id){
+  const today = localDate();
+  const h = habits.find(x => x.id === id);
+  if(!h || h.lastCheckIn === today) return;
+  if(id === view){
+    animFrom = h.streak;
+    walking = true;
+    clearTimeout(walkTimer);
+    walkTimer = setTimeout(() => { walking = false; animFrom = null; render(); }, 900);
+  }
+  h.streak += 1; h.lastCheckIn = today;
+  save(); render();
+}
+function resetHabit(id){
+  const h = habits.find(x => x.id === id);
+  if(h){ h.streak = 0; h.lastCheckIn = null; save(); }
+  confirming = null; render();
+}
+function deleteHabit(id){
+  habits = habits.filter(x => x.id !== id);
+  save(); confirming = null; view = "list"; render();
+}
+
+// ============ SVG: gladiador animado ============
+function animRot(values, dur){
+  return `<animateTransform attributeName="transform" type="rotate" values="${values}" dur="${dur}" repeatCount="indefinite"/>`;
+}
+function gladiadorSVG(walk){
+  const step = "0.42s";
+  const legL = walk ? animRot("24 -3.5 -9; -24 -3.5 -9; 24 -3.5 -9", step)
+                    : animRot("1.5 -3.5 -9; -1.5 -3.5 -9; 1.5 -3.5 -9", "2.8s");
+  const legR = walk ? animRot("-24 3.5 -9; 24 3.5 -9; -24 3.5 -9", step)
+                    : animRot("-1.5 3.5 -9; 1.5 3.5 -9; -1.5 3.5 -9", "2.8s");
+  const bob  = `<animateTransform attributeName="transform" type="translate"
+      values="${walk ? "0 0; 0 -1.8; 0 0" : "0 0; 0 -1.2; 0 0"}"
+      dur="${walk ? step : "2.8s"}" repeatCount="indefinite"
+      calcMode="spline" keySplines="0.4 0 0.6 1; 0.4 0 0.6 1" keyTimes="0; 0.5; 1"/>`;
+  const shield = walk ? animRot("-8 -6 -22; 8 -6 -22; -8 -6 -22", step)
+                      : animRot("-2 -6 -22; 2 -6 -22; -2 -6 -22", "3.2s");
+  const sword  = walk ? animRot("12 8 -20; -12 8 -20; 12 8 -20", step)
+                      : animRot("3 8 -20; -3 8 -20; 3 8 -20", "3.2s");
+  const plume  = walk ? animRot("-6 0 -33; 5 0 -33; -6 0 -33", "0.3s")
+                      : animRot("-2.5 0 -33; 2.5 0 -33; -2.5 0 -33", "3.6s");
+  return `
+  <g ${walk ? 'transform="rotate(6 0 0)"' : ""}>
+    <g>${legL}<line x1="-3.5" y1="-9" x2="-4.5" y2="0" stroke="${COL.ink}" stroke-width="3" stroke-linecap="round"/></g>
+    <g>${legR}<line x1="3.5" y1="-9" x2="4.5" y2="0" stroke="${COL.ink}" stroke-width="3" stroke-linecap="round"/></g>
+    <g>${bob}
+      <path d="M -6 -24 L 6 -24 L 8 -9 L -8 -9 Z" fill="${COL.ink}"/>
+      <rect x="-7" y="-15" width="14" height="2.6" fill="${COL.gold}"/>
+      <g>${shield}
+        <circle cx="-11" cy="-17" r="6.5" fill="${COL.gold}" stroke="${COL.ink}" stroke-width="2"/>
+        <circle cx="-11" cy="-17" r="2" fill="${COL.ink}"/>
+      </g>
+      <g>${sword}
+        <line x1="9" y1="-19" x2="16" y2="-26" stroke="${COL.ink}" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+      <circle cx="0" cy="-30" r="5.2" fill="${COL.ink}"/>
+      <path d="M -5.5 -31 A 5.5 5.5 0 0 1 5.5 -31 L 5.5 -28.5 L -5.5 -28.5 Z" fill="${COL.inkSoft}"/>
+      <g>${plume}<path d="M -6 -33 Q 0 -43 7 -34 Q 1 -37 -3 -32 Z" fill="${COL.trail}"/></g>
+    </g>
+  </g>`;
+}
+function coliseoSVG(reached){
+  const fill = reached ? COL.gold : COL.paper;
+  const arcFill = reached ? COL.paper : COL.contour;
+  let arcs = "";
+  for(const x of [-9,0,9]){
+    arcs += `<path d="M ${x-2.6} 6 L ${x-2.6} -2 A 2.6 2.6 0 0 1 ${x+2.6} -2 L ${x+2.6} 6 Z"
+      fill="${arcFill}" stroke="${COL.ink}" stroke-width="1.4"/>`;
+  }
+  return `<path d="M -16 6 L -16 -10 Q 0 -20 16 -10 L 16 6 Z" fill="${fill}"
+    stroke="${COL.ink}" stroke-width="2.5" stroke-linejoin="round"/>${arcs}`;
+}
+
+// ============ SVG: camino horizontal ============
+function pathSVG(h){
+  const n = h.days;
+  const svgW = PAD*2 + n*SPACING;
+  const startStreak = (animFrom !== null) ? animFrom : h.streak;
+  const doneX = PAD + h.streak*SPACING;
+  const avatarStartX = PAD + Math.min(startStreak, n)*SPACING;
+
+  // curvas de nivel
+  let contours = "";
+  for(const y of [40, 90, 215]){
+    for(let j = 0; j < Math.ceil(svgW/400); j++){
+      contours += `<path d="M ${j*400-20} ${y} C ${j*400+100} ${y-18}, ${j*400+220} ${y+16}, ${j*400+420} ${y-6}"
+        fill="none" stroke="${COL.contour}" stroke-width="1.5"/>`;
+    }
+  }
+  // checkpoints
+  let cps = "";
+  for(let i = 0; i <= n; i++){
+    const x = PAD + i*SPACING;
+    const reached = i <= h.streak;
+    if(i === 0){
+      cps += `<g transform="translate(${x},${LINE_Y})">
+        <circle r="9" fill="${COL.ink}"/>
+        <text y="30" text-anchor="middle" style="font-family:'Space Mono',monospace;font-size:11px;fill:${COL.inkSoft}">SALIDA</text></g>`;
+    } else if(i === n){
+      cps += `<g transform="translate(${x},${LINE_Y})">${coliseoSVG(reached)}
+        <text y="42" text-anchor="middle" style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;fill:${COL.ink}">META</text></g>`;
+    } else {
+      const mil = i % 10 === 0;
+      cps += `<g transform="translate(${x},${LINE_Y})">
+        <circle r="${mil?11:5.5}" fill="${reached?COL.done:COL.paper}"
+          stroke="${reached?COL.done:COL.inkSoft}" stroke-width="${mil?2.5:2}"/>
+        ${mil ? `<text y="4" text-anchor="middle" style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;fill:${reached?COL.white:COL.inkSoft}">${i}</text>` : ""}
+      </g>`;
+    }
+  }
+  return `
+  <svg width="${svgW}" height="${SVG_H}" viewBox="0 0 ${svgW} ${SVG_H}" style="display:block">
+    ${contours}
+    <line x1="${PAD}" y1="${LINE_Y}" x2="${svgW-PAD}" y2="${LINE_Y}"
+      stroke="${COL.trail}" stroke-width="3" stroke-dasharray="7 8" stroke-linecap="round" opacity="0.55"/>
+    ${h.streak > 0 ? `<line x1="${PAD}" y1="${LINE_Y}" x2="${doneX}" y2="${LINE_Y}"
+      stroke="${COL.done}" stroke-width="4.5" stroke-linecap="round"/>` : ""}
+    ${cps}
+    <g id="avatar" style="transform:translate(${avatarStartX}px, ${LINE_Y}px)">
+      <ellipse cy="2" rx="16" ry="5" fill="${COL.trail}" opacity="0.18">
+        <animate attributeName="rx" values="13;19;13" dur="2.4s" repeatCount="indefinite"/>
+      </ellipse>
+      ${gladiadorSVG(walking)}
+    </g>
+  </svg>`;
+}
+
+// ============ Utilidades DOM ============
+const app = document.getElementById("app");
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+// ============ Vistas ============
+function render(){
+  if(view === "list") return renderList();
+  if(view === "form") return renderForm();
+  const h = habits.find(x => x.id === view);
+  if(!h){ view = "list"; return renderList(); }
+  renderPath(h);
+}
+
+function renderList(){
+  const cards = habits.map(h => {
+    const doneToday = h.lastCheckIn === localDate();
+    const completed = h.streak >= h.days;
+    const pct = Math.round(h.streak/h.days*100);
+    return `
+    <div class="card">
+      <div data-open="${h.id}" role="button" aria-label="Abrir camino de ${esc(h.name)}" style="cursor:pointer">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <h2>${esc(h.name)}</h2>
+          <span class="meta">${h.streak}/${h.days} · ${pct}%</span>
+        </div>
+        <div class="bar"><div class="${completed?"full":""}" style="width:${pct}%"></div></div>
+      </div>
+      ${completed
+        ? `<p style="margin:10px 0 0;font-size:14.5px;color:var(--gold);font-weight:600">🏛 Meta alcanzada</p>`
+        : `<button class="btn small ${doneToday?"done":""}" data-checkin="${h.id}" ${doneToday?"disabled":""}>
+            ${doneToday ? "✓ Hoy registrado" : "Registrar hoy"}</button>`}
+    </div>`;
+  }).join("");
+
+  app.innerHTML = `
+  <div class="wrap">
+    <p class="eyebrow">TUS EXPEDICIONES</p>
+    <h1>Caminos en marcha</h1>
+    ${notices.map(m => `<div class="banner">${esc(m)}</div>`).join("")}
+    ${habits.length === 0 ? `<p class="muted" style="margin:18px 0 24px">
+      Todavía no hay ninguna ruta trazada. Crea tu primer hábito y el gladiador se pondrá en marcha.</p>` : ""}
+    ${cards}
+    <button class="btn ink" id="new" style="margin-top:10px">+ Nueva expedición</button>
+  </div>`;
+
+  app.querySelectorAll("[data-open]").forEach(el =>
+    el.addEventListener("click", () => { view = el.dataset.open; confirming = null; render(); }));
+  app.querySelectorAll("[data-checkin]").forEach(el =>
+    el.addEventListener("click", e => { e.stopPropagation(); checkIn(el.dataset.checkin); }));
+  document.getElementById("new").addEventListener("click", () => { view = "form"; render(); });
+}
+
+function renderForm(){
+  app.innerHTML = `
+  <div class="center"><div>
+    <button class="back" id="back">← Expediciones</button>
+    <p class="eyebrow">NUEVA EXPEDICIÓN</p>
+    <h1>Traza tu camino</h1>
+    <p class="muted" style="margin-bottom:28px">Un checkpoint por día. Si un día no registras el hábito,
+      la ruta se reinicia y vuelves a la salida.</p>
+    <label for="fname">Hábito u objetivo</label>
+    <input id="fname" placeholder="Rutina de kettlebell" />
+    <label for="fdays" style="margin-top:18px">Días de camino</label>
+    <input id="fdays" type="number" min="1" max="365" value="90" />
+    <button class="btn" id="start" style="margin-top:28px;opacity:.4" disabled>Empezar la ruta</button>
+  </div></div>`;
+
+  const name = document.getElementById("fname");
+  const days = document.getElementById("fdays");
+  const start = document.getElementById("start");
+  name.addEventListener("input", () => {
+    const ok = name.value.trim().length > 0;
+    start.disabled = !ok;
+    start.style.opacity = ok ? "1" : ".4";
+  });
+  start.addEventListener("click", () => {
+    const d = Math.max(1, Math.min(365, parseInt(days.value) || 90));
+    addHabit(name.value.trim(), d);
+  });
+  document.getElementById("back").addEventListener("click", () => { view = "list"; render(); });
+}
+
+function renderPath(h){
+  const n = h.days;
+  const today = localDate();
+  const doneToday = h.lastCheckIn === today;
+  const completed = h.streak >= n;
+  const pct = Math.round(h.streak/n*100);
+  const isC = a => confirming && confirming.id === h.id && confirming.action === a;
+
+  app.innerHTML = `
+  <header style="padding:18px 20px 8px">
+    <div style="max-width:640px;margin:0 auto">
+      <button class="back" id="back">← Expediciones</button>
+      <p class="eyebrow">DÍA ${h.streak} DE ${n} · ${pct}%</p>
+      <h1 class="small">${esc(h.name)}</h1>
+      ${completed
+        ? `<div class="gold-box">
+            <p class="title">🏛 El gladiador llegó al Coliseo: ${n} días seguidos</p>
+            <p class="muted" style="font-size:14px;margin-top:4px">El hábito ya forma parte de ti.</p>
+          </div>`
+        : `<button class="btn ${doneToday?"done":""}" id="checkin" style="margin-top:14px" ${doneToday?"disabled":""}>
+            ${doneToday ? "✓ Hoy registrado — hasta mañana" : "Registrar hoy"}</button>`}
+    </div>
+  </header>
+  <main class="scroller" id="scroller">${pathSVG(h)}</main>
+  <p class="hint">← desliza para recorrer el camino →</p>
+  <div class="opts" id="opts">
+    ${!isC("reset") && !isC("delete") ? `
+      <button class="btn-ghost" id="oreset">Reiniciar a día 0</button>
+      <button class="btn-ghost danger" id="odelete">Borrar hábito</button>` : ""}
+    ${isC("reset") ? `<div class="confirm"><span>¿Volver a la salida?</span>
+      <button class="yes" id="cyes">Sí</button><button class="no" id="cno">No</button></div>` : ""}
+    ${isC("delete") ? `<div class="confirm"><span>¿Borrar este hábito y su progreso?</span>
+      <button class="yes" id="cyes">Sí</button><button class="no" id="cno">No</button></div>` : ""}
+  </div>`;
+
+  document.getElementById("back").addEventListener("click", () => { view = "list"; confirming = null; render(); });
+  const ci = document.getElementById("checkin");
+  if(ci) ci.addEventListener("click", () => checkIn(h.id));
+  const or = document.getElementById("oreset");
+  if(or) or.addEventListener("click", () => { confirming = {id:h.id, action:"reset"}; render(); });
+  const od = document.getElementById("odelete");
+  if(od) od.addEventListener("click", () => { confirming = {id:h.id, action:"delete"}; render(); });
+  const cy = document.getElementById("cyes");
+  if(cy) cy.addEventListener("click", () => confirming.action === "reset" ? resetHabit(h.id) : deleteHabit(h.id));
+  const cn = document.getElementById("cno");
+  if(cn) cn.addEventListener("click", () => { confirming = null; render(); });
+
+  // Animación de desplazamiento: renderizamos en la posición previa y
+  // en el siguiente frame movemos al destino (la transición CSS hace el resto)
+  const avatar = document.getElementById("avatar");
+  const finalX = PAD + Math.min(h.streak, n)*SPACING;
+  if(animFrom !== null){
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      avatar.style.transform = `translate(${finalX}px, ${LINE_Y}px)`;
+    }));
+  }
+  // auto-scroll hasta el gladiador
+  const sc = document.getElementById("scroller");
+  requestAnimationFrame(() => {
+    sc.scrollTo({ left: Math.max(0, finalX - sc.clientWidth/2), behavior:"smooth" });
+  });
+}
+
+// ============ Arranque ============
+load();
+checkMissedDays();
+render();
+
+// Al volver a la app tras tenerla en segundo plano, recomprobar días fallados
+document.addEventListener("visibilitychange", () => {
+  if(document.visibilityState === "visible"){
+    checkMissedDays();
+    render();
+  }
+});
+
+// Service worker para funcionamiento sin conexión
+if("serviceWorker" in navigator){
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js"));
+}
+</script>
+</body>
+</html>
