@@ -1,6 +1,6 @@
 // Service worker: cachea la app para que funcione sin conexión.
 // Si cambias index.html, sube VERSION (v1 -> v2) para forzar la actualización.
-const VERSION = "camino-v1";
+const VERSION = "camino-v2";
 const ASSETS = [
   "./",
   "./index.html",
