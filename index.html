@@ -88,15 +88,22 @@ input:focus, button:focus-visible{ outline:2px solid var(--trail); outline-offse
 .rp .dot{ width:10px; height:10px; border-radius:50%; display:inline-block; border:1.5px solid var(--ink-soft); }
 .rp .dot.on{ background:var(--done); border-color:var(--done); }
 .rp .row{ display:flex; align-items:center; gap:12px; padding:9px 2px; border-bottom:1px solid #EDEAE0; }
-.rp .tick{ width:24px; height:24px; min-width:24px; border-radius:50%; border:2px solid var(--ink-soft);
+.rp .tick{ width:28px; height:28px; min-width:28px; border-radius:50%; border:2px solid var(--ink-soft);
   color:var(--white); display:inline-flex; align-items:center; justify-content:center;
   font-size:14px; font-weight:700; transition:all .2s ease; }
 .rp .tick.mid{ background:var(--gold); border-color:var(--gold); }
 .rp .tick.ok{ background:var(--done); border-color:var(--done); }
 .rp .exname{ flex:1; font-size:15.5px; }
 .rp .exsub{ display:block; font-family:'Space Mono',monospace; font-size:11px; color:var(--ink-soft); }
-.rp input.rep{ width:68px; padding:8px 6px; font-size:16px; font-family:'Space Mono',monospace;
+.rp input.rep{ width:52px; padding:8px 4px; font-size:16px; font-family:'Space Mono',monospace;
   text-align:center; border:1.5px solid var(--ink-soft); border-radius:8px; }
+.rp input.rep::-webkit-outer-spin-button, .rp input.rep::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+.rp .stpwrap{ display:flex; align-items:center; gap:6px; }
+.rp .stp{ width:44px; height:44px; min-width:44px; border-radius:10px; border:1.5px solid var(--ink);
+  background:var(--white); color:var(--ink); font-size:22px; font-weight:600; line-height:1; padding:0;
+  touch-action:manipulation; user-select:none; -webkit-user-select:none; }
+.rp .tick{ cursor:pointer; }
+.rp .tick.locked{ cursor:default; }
 .rp .total-final{ font-family:'Space Mono',monospace; font-size:15px; font-weight:700; color:var(--done);
   width:68px; text-align:center; }
 .rp .actions{ display:flex; gap:10px; margin-top:14px; }
@@ -456,14 +463,18 @@ function routinePanelHTML(h){
     const cls = cur >= it.reps ? "ok" : cur >= 1 ? "mid" : "";
     const mark = cur >= it.reps ? "✓" : cur >= 1 ? "·" : "";
     return `<div class="row">
-      <span class="tick ${cls}" data-tick="${i}">${mark}</span>
+      <span class="tick ${cls} ${doneToday ? "locked" : ""}" data-tick="${i}" data-target="${it.reps}" role="${doneToday ? "" : "button"}" aria-label="Poner objetivo de ${esc(it.name)}">${mark}</span>
       <span class="exname">${esc(it.name)}
         <span class="exsub" data-sub="${i}">objetivo ${it.reps}/serie${total > 0 ? ` · acumuladas ${total}` : ""}</span>
       </span>
       ${doneToday
         ? `<span class="total-final">${total}</span>`
-        : `<input class="rep" type="number" inputmode="numeric" min="0" max="999" placeholder="0"
-             value="${cur || ""}" data-rep="${i}" aria-label="Repeticiones de ${esc(it.name)} en esta serie" />`}
+        : `<div class="stpwrap">
+             <button class="stp" data-dec="${i}" aria-label="Restar repetición">−</button>
+             <input class="rep" type="number" inputmode="numeric" min="0" max="999" placeholder="0"
+               value="${cur || ""}" data-rep="${i}" aria-label="Repeticiones de ${esc(it.name)} en esta serie" />
+             <button class="stp" data-inc="${i}" aria-label="Sumar repetición">+</button>
+           </div>`}
     </div>`;
   }).join("");
 
@@ -519,10 +530,45 @@ function updateRoutineUI(h){
   if(bd && !confirmEnd) bd.disabled = !canEndDay;
 }
 
+function bindHold(btn, fn){
+  let t = null, iv = null;
+  const stop = () => { clearTimeout(t); clearInterval(iv); t = iv = null; };
+  btn.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    fn();
+    t = setTimeout(() => { iv = setInterval(fn, 110); }, 450);
+  });
+  ["pointerup","pointerleave","pointercancel"].forEach(ev => btn.addEventListener(ev, stop));
+  btn.addEventListener("contextmenu", (e) => e.preventDefault());
+}
+
 function bindRoutinePanel(h){
+  const repInput = (i) => document.querySelector(`input[data-rep="${i}"]`);
+  const step = (i, delta) => {
+    const inp = repInput(i);
+    if(!inp) return;
+    const v = Math.max(0, Math.min(999, (parseInt(inp.value) || 0) + delta));
+    inp.value = v || "";
+    setReps(h.id, i, v);
+  };
   document.querySelectorAll("input[data-rep]").forEach(inp => {
     inp.addEventListener("input", () => setReps(h.id, parseInt(inp.dataset.rep), inp.value));
   });
+  document.querySelectorAll("button[data-dec]").forEach(b =>
+    bindHold(b, () => step(parseInt(b.dataset.dec), -1)));
+  document.querySelectorAll("button[data-inc]").forEach(b =>
+    bindHold(b, () => step(parseInt(b.dataset.inc), +1)));
+  document.querySelectorAll(".tick:not(.locked)").forEach(t =>
+    t.addEventListener("click", () => {
+      const i = parseInt(t.dataset.tick);
+      const target = parseInt(t.dataset.target) || 1;
+      const inp = repInput(i);
+      if(!inp) return;
+      const cur = parseInt(inp.value) || 0;
+      const v = cur >= target ? 0 : target; // toque: objetivo cumplido / deshacer
+      inp.value = v || "";
+      setReps(h.id, i, v);
+    }));
   const bs = document.getElementById("btn-serie");
   if(bs) bs.addEventListener("click", () => finishSeries(h.id));
   const bd = document.getElementById("btn-dia");
