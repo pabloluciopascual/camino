@@ -44,16 +44,16 @@ h1.small{ font-size:28px; margin:4px 0 0; }
 .card h2{ font-family:'Fraunces',serif; font-size:21px; margin:0; font-weight:600; }
 .card .meta{ font-family:'Space Mono',monospace; font-size:12.5px; color:var(--ink-soft); }
 .bar{ height:6px; background:#EDEAE0; border-radius:3px; margin:12px 0 4px; overflow:hidden; }
-.bar > div{ height:100%; background:var(--done); border-radius:3px; transition:width .6s ease; }
+.bar > div{ height:100%; background:var(--done); border-radius:3px; transition:width .6s ease, background .3s ease; }
 .bar > div.full{ background:var(--gold); }
 
 button{ font-family:inherit; cursor:pointer; }
+button:disabled{ cursor:default; }
 .btn{ background:var(--trail); color:#fff; border:none; border-radius:12px;
   padding:14px 20px; font-size:16px; font-weight:600; letter-spacing:.01em; width:100%; }
 .btn.small{ padding:11px 16px; font-size:15px; margin-top:10px; }
-.btn.done{ background:var(--done); cursor:default; }
+.btn.done{ background:var(--done); }
 .btn.ink{ background:var(--ink); }
-.btn:disabled{ cursor:default; }
 .btn-ghost{ background:none; border:1.5px solid var(--ink); color:var(--ink);
   border-radius:10px; padding:10px 16px; font-size:14px; }
 .btn-ghost.danger{ color:#9C2B1D; border-color:#9C2B1D; }
@@ -62,9 +62,53 @@ button{ font-family:inherit; cursor:pointer; }
 
 label{ display:block; font-family:'Space Mono',monospace; font-size:12px;
   letter-spacing:.08em; color:var(--ink-soft); margin-bottom:6px; }
-input{ width:100%; padding:12px 14px; font-size:16px; font-family:inherit;
-  border:1.5px solid var(--ink); border-radius:10px; background:#fff; color:var(--ink); }
+input{ padding:12px 14px; font-size:16px; font-family:inherit;
+  border:1.5px solid var(--ink); border-radius:10px; background:#fff; color:var(--ink); width:100%; }
 input:focus, button:focus-visible{ outline:2px solid var(--trail); outline-offset:2px; }
+
+.type-btn{ flex:1; text-align:left; background:var(--white); color:var(--ink);
+  border:1.5px solid var(--ink); border-radius:10px; padding:10px 12px; }
+.type-btn.sel{ background:var(--ink); color:var(--white); }
+.type-btn .t{ font-weight:600; font-size:14.5px; }
+.type-btn .d{ font-size:12px; opacity:.75; margin-top:2px; }
+
+.ex-row{ display:flex; gap:8px; margin-bottom:8px; }
+.ex-row input.reps{ width:84px; text-align:center; font-family:'Space Mono',monospace; }
+.ex-del{ background:none; border:1.5px solid var(--ink-soft); color:var(--ink-soft);
+  border-radius:10px; width:44px; min-width:44px; font-size:18px; }
+.ex-add{ background:none; border:1.5px dashed var(--ink-soft); color:var(--ink-soft);
+  border-radius:10px; padding:9px 14px; font-size:14px; width:100%; }
+
+.rp{ margin-top:14px; background:var(--white); border:1.5px solid var(--ink); border-radius:14px; padding:14px 16px; }
+.rp .head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; }
+.rp .tag{ font-family:'Space Mono',monospace; font-size:11.5px; letter-spacing:.1em; color:var(--ink-soft); }
+.rp .pct{ font-family:'Space Mono',monospace; font-size:12.5px; font-weight:700; }
+.rp .series-row{ display:flex; align-items:center; gap:6px; margin:6px 0 8px;
+  font-family:'Space Mono',monospace; font-size:11px; color:var(--ink-soft); }
+.rp .dot{ width:10px; height:10px; border-radius:50%; display:inline-block; border:1.5px solid var(--ink-soft); }
+.rp .dot.on{ background:var(--done); border-color:var(--done); }
+.rp .row{ display:flex; align-items:center; gap:12px; padding:9px 2px; border-bottom:1px solid #EDEAE0; }
+.rp .tick{ width:24px; height:24px; min-width:24px; border-radius:50%; border:2px solid var(--ink-soft);
+  color:var(--white); display:inline-flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:700; transition:all .2s ease; }
+.rp .tick.mid{ background:var(--gold); border-color:var(--gold); }
+.rp .tick.ok{ background:var(--done); border-color:var(--done); }
+.rp .exname{ flex:1; font-size:15.5px; }
+.rp .exsub{ display:block; font-family:'Space Mono',monospace; font-size:11px; color:var(--ink-soft); }
+.rp input.rep{ width:68px; padding:8px 6px; font-size:16px; font-family:'Space Mono',monospace;
+  text-align:center; border:1.5px solid var(--ink-soft); border-radius:8px; }
+.rp .total-final{ font-family:'Space Mono',monospace; font-size:15px; font-weight:700; color:var(--done);
+  width:68px; text-align:center; }
+.rp .actions{ display:flex; gap:10px; margin-top:14px; }
+.rp .act{ flex:1; border:none; border-radius:10px; padding:12px 10px; font-size:15px; font-weight:600; }
+.rp .act.serie{ background:var(--ink); color:var(--white); }
+.rp .act.dia{ background:var(--trail); color:var(--white); }
+.rp .act:disabled{ background:#EDEAE0; color:var(--ink-soft); }
+.rp .hintline{ margin:10px 0 0; font-size:13px; line-height:1.45; color:var(--ink-soft); }
+.rp .hintline.sealed{ color:var(--done); font-weight:600; }
+.rp .confirm{ flex:1; display:flex; gap:6px; align-items:center; font-size:12.5px; line-height:1.2; }
+.rp .confirm .yes{ background:var(--trail); color:#fff; border:none; border-radius:8px; padding:9px 12px; font-weight:700; }
+.rp .confirm .no{ background:#EDEAE0; border:none; border-radius:8px; padding:9px 12px; }
 
 .scroller{ overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; margin-top:10px; }
 .hint{ text-align:center; font-family:'Space Mono',monospace; font-size:11px;
@@ -73,9 +117,9 @@ input:focus, button:focus-visible{ outline:2px solid var(--trail); outline-offse
 .gold-box{ margin-top:14px; background:#F3EAD2; border:1.5px solid var(--gold); border-radius:12px; padding:14px 16px; }
 .gold-box p{ margin:0; }
 .gold-box .title{ font-family:'Fraunces',serif; font-size:20px; font-weight:600; }
-.confirm{ display:flex; align-items:center; gap:10px; width:100%; font-size:14px; }
-.confirm .yes{ background:#9C2B1D; color:#fff; border:none; border-radius:8px; padding:8px 16px; font-weight:600; }
-.confirm .no{ background:#EDEAE0; border:none; border-radius:8px; padding:8px 16px; }
+.confirm-inline{ display:flex; align-items:center; gap:10px; width:100%; font-size:14px; }
+.confirm-inline .yes{ background:#9C2B1D; color:#fff; border:none; border-radius:8px; padding:8px 16px; font-weight:600; }
+.confirm-inline .no{ background:#EDEAE0; border:none; border-radius:8px; padding:8px 16px; }
 .center{ min-height:85vh; display:flex; align-items:center; justify-content:center; padding:24px; }
 .center > div{ max-width:440px; width:100%; }
 #avatar{ transition:transform .8s cubic-bezier(.4,0,.2,1); }
@@ -103,17 +147,40 @@ function yesterdayStr(){ const d = new Date(); d.setDate(d.getDate()-1); return 
 
 // ============ Estado ============
 let habits = [];
-let view = "list";           // "list" | "form" | id de hábito
+let view = "list";
 let notices = [];
-let confirming = null;       // {id, action}
+let confirming = null;     // {id, action} para reiniciar/borrar
+let confirmEnd = false;    // confirmación de "Día terminado"
 let walking = false;
 let walkTimer = null;
-let animFrom = null;         // streak previa para animar el desplazamiento
+let animFrom = null;
+let formState = null;      // {name, days, type, items:[{name,reps}], series}
+let dateSeen = localDate();
 
+// ============ Persistencia ============
+function normalize(list){
+  return list.map((h) => {
+    const n = Object.assign(
+      { type:"simple", items:[], dayChecks:null, seriesTarget:1, dayScores:[] }, h
+    );
+    n.items = (n.items || []).map((it) =>
+      typeof it === "string" ? { name: it, reps: 1 } : it
+    );
+    // dayChecks de versiones previas o incoherentes: descartar (el día registrado no se pierde)
+    if (
+      n.dayChecks &&
+      (!Array.isArray(n.dayChecks.reps) ||
+        n.dayChecks.reps.length !== n.items.length ||
+        !Array.isArray(n.dayChecks.totals) ||
+        n.dayChecks.totals.length !== n.items.length)
+    ) n.dayChecks = null;
+    return n;
+  });
+}
 function load(){
   try{
     const raw = localStorage.getItem(KEY);
-    if(raw) habits = (JSON.parse(raw).habits) || [];
+    habits = raw ? normalize((JSON.parse(raw).habits) || []) : [];
   }catch(e){ habits = []; }
 }
 function save(){
@@ -121,36 +188,118 @@ function save(){
   catch(e){ console.error("No se pudo guardar", e); }
 }
 
-// Reinicio automático de días fallados
+// Reinicios por día fallado. Devuelve true si hubo cambios.
 function checkMissedDays(){
   const today = localDate(), yest = yesterdayStr();
-  notices = [];
+  const msgs = [];
   let changed = false;
   habits = habits.map(h => {
     if(h.streak > 0 && h.lastCheckIn !== today && h.lastCheckIn !== yest){
-      notices.push(`«${h.name}»: fallaste un día y vuelve a la salida (llevabas ${h.streak} ${h.streak===1?"día":"días"}).`);
+      msgs.push(`«${h.name}»: fallaste un día y vuelve a la salida (llevabas ${h.streak} ${h.streak===1?"día":"días"}).`);
       changed = true;
       return {...h, streak:0, lastCheckIn:null};
     }
     return h;
   });
-  if(changed) save();
+  if(changed){ notices = msgs; save(); }
+  return changed;
 }
 
-// ============ Acciones ============
-function addHabit(name, days){
-  const h = { id:"h"+Date.now()+Math.floor(Math.random()*1000),
-    name, days, startDate: localDate(), streak:0, lastCheckIn:null };
+// ============ Lógica de rutinas ============
+const dayScore = (h, totals) => {
+  const ratios = h.items.map((it, i) => Math.min((totals[i] || 0) / (it.reps * h.seriesTarget), 1));
+  return ratios.reduce((a, b) => a + b, 0) / ratios.length;
+};
+const scoreColor = (s) => (s >= 0.999 ? COL.done : s >= 0.5 ? COL.gold : COL.trail);
+const freshDay = (h) => ({
+  date: localDate(),
+  reps: h.items.map(() => 0),
+  totals: h.items.map(() => 0),
+  series: 0,
+});
+const editableToday = (h) => h.lastCheckIn !== localDate() && h.streak < h.days;
+const todayDC = (h) =>
+  h.dayChecks && h.dayChecks.date === localDate() ? h.dayChecks : freshDay(h);
+
+function setReps(id, idx, value){
+  const v = Math.max(0, Math.min(999, parseInt(value) || 0));
+  const h = habits.find(x => x.id === id);
+  if(!h || h.type !== "checklist" || !editableToday(h)) return;
+  const dc = todayDC(h);
+  dc.reps = [...dc.reps]; dc.reps[idx] = v;
+  h.dayChecks = dc;
+  save();
+  updateRoutineUI(h); // actualización quirúrgica: no re-render (mantiene el foco del input)
+}
+
+function finishSeries(id){
+  const h = habits.find(x => x.id === id);
+  if(!h || h.type !== "checklist" || !editableToday(h)) return;
+  const dc = todayDC(h);
+  if(!dc.reps.some(r => (r || 0) > 0)) return;
+  h.dayChecks = {
+    ...dc,
+    totals: dc.totals.map((t, i) => (t || 0) + (dc.reps[i] || 0)),
+    series: (dc.series || 0) + 1,
+    reps: h.items.map(() => 0),
+  };
+  save();
+  render();
+}
+
+function finishDay(id){
+  const today = localDate();
+  const h = habits.find(x => x.id === id);
+  if(!h || h.type !== "checklist" || !editableToday(h)) return;
+  const dc = todayDC(h);
+  const partial = dc.reps.some(r => (r || 0) > 0);
+  const totals = dc.totals.map((t, i) => (t || 0) + (partial ? dc.reps[i] || 0 : 0));
+  const series = (dc.series || 0) + (partial ? 1 : 0);
+  const valid = series >= 1 && h.items.every((_, i) => (totals[i] || 0) >= 1);
+  if(!valid) return;
+  const ds = [...(h.dayScores || [])];
+  ds[h.streak] = dayScore(h, totals);
+  if(id === view){
+    animFrom = h.streak; walking = true;
+    clearTimeout(walkTimer);
+    walkTimer = setTimeout(() => { walking = false; animFrom = null; render(); }, 900);
+  }
+  h.streak += 1;
+  h.lastCheckIn = today;
+  h.dayScores = ds;
+  h.dayChecks = { date: today, reps: h.items.map(() => 0), totals, series, sealedAt: new Date().toISOString() };
+  confirmEnd = false;
+  save();
+  render();
+}
+
+// ============ Acciones generales ============
+function addHabit(){
+  const f = formState;
+  const name = f.name.trim();
+  const days = Math.max(1, Math.min(365, parseInt(f.days) || 90));
+  if(!name) return;
+  let items = [], seriesTarget = 1;
+  if(f.type === "checklist"){
+    items = f.items
+      .map(it => ({ name: it.name.trim(), reps: Math.max(1, parseInt(it.reps) || 0) }))
+      .filter(it => it.name && it.reps >= 1);
+    if(items.length === 0) return;
+    seriesTarget = Math.max(1, Math.min(20, parseInt(f.series) || 1));
+  }
+  const h = { id: "h"+Date.now()+Math.floor(Math.random()*1000),
+    name, days, startDate: localDate(), streak:0, lastCheckIn:null,
+    type: f.type, items, seriesTarget, dayScores: [], dayChecks: null };
   habits.push(h); save();
+  formState = null;
   view = h.id; render();
 }
 function checkIn(id){
   const today = localDate();
   const h = habits.find(x => x.id === id);
-  if(!h || h.lastCheckIn === today) return;
+  if(!h || h.lastCheckIn === today || h.streak >= h.days) return;
   if(id === view){
-    animFrom = h.streak;
-    walking = true;
+    animFrom = h.streak; walking = true;
     clearTimeout(walkTimer);
     walkTimer = setTimeout(() => { walking = false; animFrom = null; render(); }, 900);
   }
@@ -159,7 +308,7 @@ function checkIn(id){
 }
 function resetHabit(id){
   const h = habits.find(x => x.id === id);
-  if(h){ h.streak = 0; h.lastCheckIn = null; save(); }
+  if(h){ h.streak = 0; h.lastCheckIn = null; h.dayScores = []; h.dayChecks = null; save(); }
   confirming = null; render();
 }
 function deleteHabit(id){
@@ -220,6 +369,12 @@ function coliseoSVG(reached){
 }
 
 // ============ SVG: camino horizontal ============
+// Color del checkpoint i (1..n): en rutinas refleja la puntuación de ese día
+function checkpointColor(h, i){
+  if(h.type !== "checklist") return COL.done;
+  const s = h.dayScores && h.dayScores[i-1] != null ? h.dayScores[i-1] : 1;
+  return scoreColor(s);
+}
 function pathSVG(h){
   const n = h.days;
   const svgW = PAD*2 + n*SPACING;
@@ -227,7 +382,6 @@ function pathSVG(h){
   const doneX = PAD + h.streak*SPACING;
   const avatarStartX = PAD + Math.min(startStreak, n)*SPACING;
 
-  // curvas de nivel
   let contours = "";
   for(const y of [40, 90, 215]){
     for(let j = 0; j < Math.ceil(svgW/400); j++){
@@ -235,7 +389,6 @@ function pathSVG(h){
         fill="none" stroke="${COL.contour}" stroke-width="1.5"/>`;
     }
   }
-  // checkpoints
   let cps = "";
   for(let i = 0; i <= n; i++){
     const x = PAD + i*SPACING;
@@ -249,9 +402,10 @@ function pathSVG(h){
         <text y="42" text-anchor="middle" style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;fill:${COL.ink}">META</text></g>`;
     } else {
       const mil = i % 10 === 0;
+      const c = reached ? checkpointColor(h, i) : null;
       cps += `<g transform="translate(${x},${LINE_Y})">
-        <circle r="${mil?11:5.5}" fill="${reached?COL.done:COL.paper}"
-          stroke="${reached?COL.done:COL.inkSoft}" stroke-width="${mil?2.5:2}"/>
+        <circle r="${mil?11:5.5}" fill="${reached?c:COL.paper}"
+          stroke="${reached?c:COL.inkSoft}" stroke-width="${mil?2.5:2}"/>
         ${mil ? `<text y="4" text-anchor="middle" style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;fill:${reached?COL.white:COL.inkSoft}">${i}</text>` : ""}
       </g>`;
     }
@@ -275,7 +429,113 @@ function pathSVG(h){
 
 // ============ Utilidades DOM ============
 const app = document.getElementById("app");
-const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+// ============ Panel de rutina: cálculo de vista previa ============
+function routinePreview(h){
+  const dc = todayDC(h);
+  const doneToday = h.lastCheckIn === localDate();
+  const partial = dc.reps.some(r => (r || 0) > 0);
+  const preview = dc.totals.map((t, i) => (t || 0) + (dc.reps[i] || 0));
+  const previewSeries = (dc.series || 0) + (partial && !doneToday ? 1 : 0);
+  const ratios = h.items.map((it, i) => Math.min((preview[i] || 0) / (it.reps * h.seriesTarget), 1));
+  const score = ratios.reduce((a, b) => a + b, 0) / ratios.length;
+  const canEndSeries = !doneToday && partial;
+  const canEndDay = !doneToday && previewSeries >= 1 && h.items.every((_, i) => (preview[i] || 0) >= 1);
+  return { dc, doneToday, partial, preview, score, canEndSeries, canEndDay };
+}
+
+function routinePanelHTML(h){
+  const { dc, doneToday, partial, score, canEndSeries, canEndDay } = routinePreview(h);
+  const dots = Array.from({ length: Math.max(h.seriesTarget, dc.series) })
+    .map((_, i) => `<span class="dot ${i < dc.series ? "on" : ""}"></span>`).join("");
+
+  const rows = h.items.map((it, i) => {
+    const cur = dc.reps[i] || 0;
+    const total = dc.totals[i] || 0;
+    const cls = cur >= it.reps ? "ok" : cur >= 1 ? "mid" : "";
+    const mark = cur >= it.reps ? "✓" : cur >= 1 ? "·" : "";
+    return `<div class="row">
+      <span class="tick ${cls}" data-tick="${i}">${mark}</span>
+      <span class="exname">${esc(it.name)}
+        <span class="exsub" data-sub="${i}">objetivo ${it.reps}/serie${total > 0 ? ` · acumuladas ${total}` : ""}</span>
+      </span>
+      ${doneToday
+        ? `<span class="total-final">${total}</span>`
+        : `<input class="rep" type="number" inputmode="numeric" min="0" max="999" placeholder="0"
+             value="${cur || ""}" data-rep="${i}" aria-label="Repeticiones de ${esc(it.name)} en esta serie" />`}
+    </div>`;
+  }).join("");
+
+  let sealedMsg = "";
+  if(doneToday){
+    const hora = dc.sealedAt
+      ? ` a las ${new Date(dc.sealedAt).toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"})}`
+      : "";
+    sealedMsg = `✓ Día sellado el ${h.lastCheckIn}${hora} con ${dc.series} ${dc.series===1?"serie":"series"} — inmutable hasta mañana.`;
+  }
+
+  return `<div class="rp" id="rp">
+    <div class="head">
+      <span class="tag">${doneToday ? "RUTINA DE HOY · REGISTRADA" : `SERIE ${dc.series + 1} EN CURSO`}</span>
+      <span class="pct" id="rp-pct" style="color:${scoreColor(score)}">${Math.round(score*100)}%</span>
+    </div>
+    <div class="series-row">SERIES <span id="rp-series-n">${dc.series}</span>/${h.seriesTarget} ${dots}</div>
+    ${rows}
+    <div class="bar" style="margin-top:12px"><div id="rp-bar" style="width:${score*100}%;background:${scoreColor(score)}"></div></div>
+    ${doneToday ? "" : `
+    <div class="actions" id="rp-actions">
+      <button class="act serie" id="btn-serie" ${canEndSeries ? "" : "disabled"}>✓ Serie terminada</button>
+      <button class="act dia" id="btn-dia" ${canEndDay ? "" : "disabled"}>🏁 Día terminado</button>
+    </div>`}
+    <p class="hintline ${doneToday ? "sealed" : ""}" id="rp-hint">
+      ${doneToday
+        ? sealedMsg
+        : (partial || dc.series > 0)
+        ? "«Serie terminada» suma la serie y reinicia los contadores. «Día terminado» sella el día y ya no se puede editar."
+        : "Apunta las repeticiones de esta serie. El día vale con ≥1 repetición de cada ejercicio en total y ≥1 serie."}
+    </p>
+  </div>`;
+}
+
+// Actualización en sitio del panel (para no perder el foco al teclear)
+function updateRoutineUI(h){
+  const { dc, score, canEndSeries, canEndDay } = routinePreview(h);
+  const pct = document.getElementById("rp-pct");
+  const bar = document.getElementById("rp-bar");
+  if(pct){ pct.textContent = `${Math.round(score*100)}%`; pct.style.color = scoreColor(score); }
+  if(bar){ bar.style.width = `${score*100}%`; bar.style.background = scoreColor(score); }
+  h.items.forEach((it, i) => {
+    const cur = dc.reps[i] || 0;
+    const tick = document.querySelector(`[data-tick="${i}"]`);
+    if(tick){
+      tick.className = "tick " + (cur >= it.reps ? "ok" : cur >= 1 ? "mid" : "");
+      tick.textContent = cur >= it.reps ? "✓" : cur >= 1 ? "·" : "";
+    }
+  });
+  const bs = document.getElementById("btn-serie");
+  const bd = document.getElementById("btn-dia");
+  if(bs) bs.disabled = !canEndSeries;
+  if(bd && !confirmEnd) bd.disabled = !canEndDay;
+}
+
+function bindRoutinePanel(h){
+  document.querySelectorAll("input[data-rep]").forEach(inp => {
+    inp.addEventListener("input", () => setReps(h.id, parseInt(inp.dataset.rep), inp.value));
+  });
+  const bs = document.getElementById("btn-serie");
+  if(bs) bs.addEventListener("click", () => finishSeries(h.id));
+  const bd = document.getElementById("btn-dia");
+  if(bd) bd.addEventListener("click", () => {
+    const actions = document.getElementById("rp-actions");
+    actions.innerHTML = `
+      <button class="act serie" id="btn-serie" disabled>✓ Serie terminada</button>
+      <div class="confirm"><span>¿Sellar el día? No podrás editarlo.</span>
+        <button class="yes" id="rp-yes">Sí</button><button class="no" id="rp-no">No</button></div>`;
+    document.getElementById("rp-yes").addEventListener("click", () => finishDay(h.id));
+    document.getElementById("rp-no").addEventListener("click", () => render());
+  });
+}
 
 // ============ Vistas ============
 function render(){
@@ -291,6 +551,17 @@ function renderList(){
     const doneToday = h.lastCheckIn === localDate();
     const completed = h.streak >= h.days;
     const pct = Math.round(h.streak/h.days*100);
+    let action;
+    if(completed){
+      action = `<p style="margin:10px 0 0;font-size:14.5px;color:var(--gold);font-weight:600">🏛 Meta alcanzada</p>`;
+    } else if(h.type === "checklist"){
+      const dc = h.dayChecks && h.dayChecks.date === localDate() ? h.dayChecks : null;
+      action = `<button class="btn small ${doneToday?"done":"ink"}" data-open2="${h.id}">
+        ${doneToday ? "✓ Hoy registrado" : `Abrir rutina · ${dc ? dc.series || 0 : 0}/${h.seriesTarget} series hoy`}</button>`;
+    } else {
+      action = `<button class="btn small ${doneToday?"done":""}" data-checkin="${h.id}" ${doneToday?"disabled":""}>
+        ${doneToday ? "✓ Hoy registrado" : "Registrar hoy"}</button>`;
+    }
     return `
     <div class="card">
       <div data-open="${h.id}" role="button" aria-label="Abrir camino de ${esc(h.name)}" style="cursor:pointer">
@@ -300,10 +571,7 @@ function renderList(){
         </div>
         <div class="bar"><div class="${completed?"full":""}" style="width:${pct}%"></div></div>
       </div>
-      ${completed
-        ? `<p style="margin:10px 0 0;font-size:14.5px;color:var(--gold);font-weight:600">🏛 Meta alcanzada</p>`
-        : `<button class="btn small ${doneToday?"done":""}" data-checkin="${h.id}" ${doneToday?"disabled":""}>
-            ${doneToday ? "✓ Hoy registrado" : "Registrar hoy"}</button>`}
+      ${action}
     </div>`;
   }).join("");
 
@@ -320,12 +588,25 @@ function renderList(){
 
   app.querySelectorAll("[data-open]").forEach(el =>
     el.addEventListener("click", () => { view = el.dataset.open; confirming = null; render(); }));
+  app.querySelectorAll("[data-open2]").forEach(el =>
+    el.addEventListener("click", e => { e.stopPropagation(); view = el.dataset.open2; confirming = null; render(); }));
   app.querySelectorAll("[data-checkin]").forEach(el =>
     el.addEventListener("click", e => { e.stopPropagation(); checkIn(el.dataset.checkin); }));
-  document.getElementById("new").addEventListener("click", () => { view = "form"; render(); });
+  document.getElementById("new").addEventListener("click", () => {
+    formState = { name:"", days:90, type:"simple", items:[{name:"",reps:""}], series:3 };
+    view = "form"; render();
+  });
 }
 
 function renderForm(){
+  const f = formState;
+  const exRows = f.items.map((it, i) => `
+    <div class="ex-row">
+      <input data-exname="${i}" placeholder="Ejercicio ${i+1} (p. ej. Swings)" value="${esc(it.name)}" />
+      <input class="reps" data-exreps="${i}" type="number" inputmode="numeric" min="1" max="999" placeholder="reps" value="${esc(it.reps)}" />
+      ${f.items.length > 1 ? `<button class="ex-del" data-exdel="${i}" aria-label="Quitar ejercicio">×</button>` : ""}
+    </div>`).join("");
+
   app.innerHTML = `
   <div class="center"><div>
     <button class="back" id="back">← Expediciones</button>
@@ -333,26 +614,60 @@ function renderForm(){
     <h1>Traza tu camino</h1>
     <p class="muted" style="margin-bottom:28px">Un checkpoint por día. Si un día no registras el hábito,
       la ruta se reinicia y vuelves a la salida.</p>
+
     <label for="fname">Hábito u objetivo</label>
-    <input id="fname" placeholder="Rutina de kettlebell" />
+    <input id="fname" placeholder="Rutina de kettlebell" value="${esc(f.name)}" />
+
     <label for="fdays" style="margin-top:18px">Días de camino</label>
-    <input id="fdays" type="number" min="1" max="365" value="90" />
-    <button class="btn" id="start" style="margin-top:28px;opacity:.4" disabled>Empezar la ruta</button>
+    <input id="fdays" type="number" inputmode="numeric" min="1" max="365" value="${esc(f.days)}" />
+
+    <label style="margin-top:18px">Tipo de expedición</label>
+    <div style="display:flex;gap:10px">
+      <button class="type-btn ${f.type==="simple"?"sel":""}" data-type="simple">
+        <div class="t">Simple</div><div class="d">Un botón: hecho / no hecho</div></button>
+      <button class="type-btn ${f.type==="checklist"?"sel":""}" data-type="checklist">
+        <div class="t">Con rutina</div><div class="d">Ejercicios, reps y series</div></button>
+    </div>
+
+    ${f.type === "checklist" ? `
+    <div style="margin-top:18px">
+      <label>Ejercicios (nombre y repeticiones por serie)</label>
+      ${exRows}
+      <button class="ex-add" id="exadd">+ Añadir ejercicio</button>
+      <label style="margin-top:18px" for="fseries">Series objetivo de la rutina</label>
+      <input id="fseries" type="number" inputmode="numeric" min="1" max="20" value="${esc(f.series)}" style="width:120px" />
+    </div>` : ""}
+
+    <button class="btn" id="start" style="margin-top:28px">Empezar la ruta</button>
   </div></div>`;
 
-  const name = document.getElementById("fname");
-  const days = document.getElementById("fdays");
-  const start = document.getElementById("start");
-  name.addEventListener("input", () => {
-    const ok = name.value.trim().length > 0;
-    start.disabled = !ok;
-    start.style.opacity = ok ? "1" : ".4";
-  });
-  start.addEventListener("click", () => {
-    const d = Math.max(1, Math.min(365, parseInt(days.value) || 90));
-    addHabit(name.value.trim(), d);
-  });
-  document.getElementById("back").addEventListener("click", () => { view = "list"; render(); });
+  const startBtn = document.getElementById("start");
+  function validity(){
+    const okName = f.name.trim().length > 0;
+    const okItems = f.type === "simple" ||
+      f.items.some(it => it.name.trim() && (parseInt(it.reps) || 0) >= 1);
+    const ok = okName && okItems;
+    startBtn.disabled = !ok;
+    startBtn.style.opacity = ok ? "1" : ".4";
+  }
+  validity();
+
+  document.getElementById("back").addEventListener("click", () => { formState = null; view = "list"; render(); });
+  document.getElementById("fname").addEventListener("input", e => { f.name = e.target.value; validity(); });
+  document.getElementById("fdays").addEventListener("input", e => { f.days = e.target.value; });
+  app.querySelectorAll("[data-type]").forEach(b =>
+    b.addEventListener("click", () => { f.type = b.dataset.type; renderForm(); }));
+  app.querySelectorAll("[data-exname]").forEach(inp =>
+    inp.addEventListener("input", () => { f.items[+inp.dataset.exname].name = inp.value; validity(); }));
+  app.querySelectorAll("[data-exreps]").forEach(inp =>
+    inp.addEventListener("input", () => { f.items[+inp.dataset.exreps].reps = inp.value; validity(); }));
+  app.querySelectorAll("[data-exdel]").forEach(b =>
+    b.addEventListener("click", () => { f.items.splice(+b.dataset.exdel, 1); renderForm(); }));
+  const exadd = document.getElementById("exadd");
+  if(exadd) exadd.addEventListener("click", () => { f.items.push({name:"",reps:""}); renderForm(); });
+  const fs = document.getElementById("fseries");
+  if(fs) fs.addEventListener("input", e => { f.series = e.target.value; });
+  startBtn.addEventListener("click", addHabit);
 }
 
 function renderPath(h){
@@ -363,19 +678,26 @@ function renderPath(h){
   const pct = Math.round(h.streak/n*100);
   const isC = a => confirming && confirming.id === h.id && confirming.action === a;
 
+  let mainAction;
+  if(completed){
+    mainAction = `<div class="gold-box">
+      <p class="title">🏛 El gladiador llegó al Coliseo: ${n} días seguidos</p>
+      <p class="muted" style="font-size:14px;margin-top:4px">El hábito ya forma parte de ti.</p></div>`;
+  } else if(h.type === "checklist"){
+    mainAction = routinePanelHTML(h);
+  } else {
+    mainAction = `<button class="btn ${doneToday?"done":""}" id="checkin" style="margin-top:14px" ${doneToday?"disabled":""}>
+      ${doneToday ? "✓ Hoy registrado — hasta mañana" : "Registrar hoy"}</button>`;
+  }
+
   app.innerHTML = `
   <header style="padding:18px 20px 8px">
     <div style="max-width:640px;margin:0 auto">
       <button class="back" id="back">← Expediciones</button>
       <p class="eyebrow">DÍA ${h.streak} DE ${n} · ${pct}%</p>
       <h1 class="small">${esc(h.name)}</h1>
-      ${completed
-        ? `<div class="gold-box">
-            <p class="title">🏛 El gladiador llegó al Coliseo: ${n} días seguidos</p>
-            <p class="muted" style="font-size:14px;margin-top:4px">El hábito ya forma parte de ti.</p>
-          </div>`
-        : `<button class="btn ${doneToday?"done":""}" id="checkin" style="margin-top:14px" ${doneToday?"disabled":""}>
-            ${doneToday ? "✓ Hoy registrado — hasta mañana" : "Registrar hoy"}</button>`}
+      ${notices.map(m => `<div class="banner">${esc(m)}</div>`).join("")}
+      ${mainAction}
     </div>
   </header>
   <main class="scroller" id="scroller">${pathSVG(h)}</main>
@@ -384,15 +706,16 @@ function renderPath(h){
     ${!isC("reset") && !isC("delete") ? `
       <button class="btn-ghost" id="oreset">Reiniciar a día 0</button>
       <button class="btn-ghost danger" id="odelete">Borrar hábito</button>` : ""}
-    ${isC("reset") ? `<div class="confirm"><span>¿Volver a la salida?</span>
+    ${isC("reset") ? `<div class="confirm-inline"><span>¿Volver a la salida?</span>
       <button class="yes" id="cyes">Sí</button><button class="no" id="cno">No</button></div>` : ""}
-    ${isC("delete") ? `<div class="confirm"><span>¿Borrar este hábito y su progreso?</span>
+    ${isC("delete") ? `<div class="confirm-inline"><span>¿Borrar este hábito y su progreso?</span>
       <button class="yes" id="cyes">Sí</button><button class="no" id="cno">No</button></div>` : ""}
   </div>`;
 
   document.getElementById("back").addEventListener("click", () => { view = "list"; confirming = null; render(); });
   const ci = document.getElementById("checkin");
   if(ci) ci.addEventListener("click", () => checkIn(h.id));
+  if(h.type === "checklist" && !completed) bindRoutinePanel(h);
   const or = document.getElementById("oreset");
   if(or) or.addEventListener("click", () => { confirming = {id:h.id, action:"reset"}; render(); });
   const od = document.getElementById("odelete");
@@ -402,8 +725,6 @@ function renderPath(h){
   const cn = document.getElementById("cno");
   if(cn) cn.addEventListener("click", () => { confirming = null; render(); });
 
-  // Animación de desplazamiento: renderizamos en la posición previa y
-  // en el siguiente frame movemos al destino (la transición CSS hace el resto)
   const avatar = document.getElementById("avatar");
   const finalX = PAD + Math.min(h.streak, n)*SPACING;
   if(animFrom !== null){
@@ -411,7 +732,6 @@ function renderPath(h){
       avatar.style.transform = `translate(${finalX}px, ${LINE_Y}px)`;
     }));
   }
-  // auto-scroll hasta el gladiador
   const sc = document.getElementById("scroller");
   requestAnimationFrame(() => {
     sc.scrollTo({ left: Math.max(0, finalX - sc.clientWidth/2), behavior:"smooth" });
@@ -423,13 +743,21 @@ load();
 checkMissedDays();
 render();
 
-// Al volver a la app tras tenerla en segundo plano, recomprobar días fallados
+// Vigilante de cambio de día: intervalo + recuperación de foco/visibilidad.
+// Si la app queda abierta al cruzar la medianoche, desbloquea el nuevo día
+// y aplica los reinicios por día fallado sin necesidad de recargar.
+function dayWatch(){
+  const t = localDate();
+  const dayChanged = t !== dateSeen;
+  dateSeen = t;
+  const resets = checkMissedDays();
+  if(dayChanged || resets) render();
+}
+setInterval(dayWatch, 30000);
 document.addEventListener("visibilitychange", () => {
-  if(document.visibilityState === "visible"){
-    checkMissedDays();
-    render();
-  }
+  if(document.visibilityState === "visible") dayWatch();
 });
+window.addEventListener("focus", dayWatch);
 
 // Service worker para funcionamiento sin conexión
 if("serviceWorker" in navigator){
